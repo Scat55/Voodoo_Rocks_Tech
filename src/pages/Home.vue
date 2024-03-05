@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { Container } from '@/shared/container';
 import { Input } from '@/shared/input';
+import { ref } from 'vue';
+
+const authorName = ref<string>('');
+
+const goTosearch = () => {
+  console.log(authorName.value);
+  authorName.value = '';
+};
 </script>
 
 <template>
@@ -14,7 +22,7 @@ import { Input } from '@/shared/input';
             ></path>
           </g>
         </svg>
-        <Input placeholder="Автор..." />
+        <Input placeholder="Автор..." v-model:value="authorName" @keydown.enter="goTosearch" />
       </div>
     </Container>
   </header>
