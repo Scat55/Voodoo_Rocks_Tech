@@ -3,7 +3,7 @@ import { Container } from '@/shared/container';
 import { Input } from '@/shared/input';
 import { postCard } from '@/widgets/post-card';
 
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 
 import axios from 'axios';
 
@@ -13,13 +13,17 @@ interface Post {
   title: string;
   body: string;
 }
-const authorName = ref<string>('');
+const searchQuery = ref<string>('');
 const posts = ref<Post[]>([]);
 
-const goTosearch = () => {
-  console.log(authorName.value);
-  authorName.value = '';
-};
+const searchNameCard = computed(() => {
+  const query = searchQuery.value.toLowerCase();
+
+  if (!query) {
+    return posts.value;
+  }
+  return posts.value.filter((post) => post.title.toLowerCase().includes(query));
+});
 
 const getInfoFromApi = async () => {
   try {
@@ -47,13 +51,13 @@ onMounted(() => {
             ></path>
           </g>
         </svg>
-        <Input placeholder="Автор..." v-model:value="authorName" @keydown.enter="goTosearch" />
+        <Input placeholder="Название..." v-model:value="searchQuery" />
       </div>
     </Container>
   </header>
   <main class="main">
     <div class="main__container">
-      <div class="main__card" v-for="post in posts" :key="post.id">
+      <div class="main__card" v-for="post in searchNameCard" :key="post.id">
         <postCard :title="post.title" :description="post.body" />
       </div>
     </div>
