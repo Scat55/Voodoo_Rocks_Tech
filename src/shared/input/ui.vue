@@ -40,24 +40,27 @@ const updateValue = (e: Event) => {
   margin-top: 1rem;
 }
 .input {
-  width: 18.125rem;
-  background-color: #f5f5f5;
-  color: #242424;
-  padding: 0.15rem 0.5rem;
-  min-height: 2.5rem;
-  font-size: 1.125rem;
-  border-radius: 4px;
+  width: 100%;
+  height: 40px;
+  line-height: 28px;
+  padding: 0 1rem;
+  padding-left: 2.5rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
   outline: none;
-  border: none;
-  line-height: 1.15;
-  box-shadow: 0px 0.625rem 1.25rem -1.125rem;
-
-  &:focus {
-    border-bottom: 2px solid #5b5fc7;
-    border-radius: 4px 4px 2px 2px;
+  font-size: 1rem;
+  background-color: #f3f3f4;
+  color: #0d0c22;
+  transition: 0.3s ease;
+  &::placeholder {
+    color: #9e9ea7;
   }
+  &:focus,
   &:hover {
-    outline: 1px solid lightgrey;
+    outline: none;
+    border-color: rgba(135, 217, 255, 0.4);
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgb(234 76 137 / 10%);
   }
 }
 </style>
