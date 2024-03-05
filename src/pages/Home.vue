@@ -3,14 +3,37 @@ import { Container } from '@/shared/container';
 import { Input } from '@/shared/input';
 import { postCard } from '@/widgets/post-card';
 
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
+import axios from 'axios';
+
+interface Post {
+  userId: number;
+  id: number;
+  title: string;
+  body: string;
+}
 const authorName = ref<string>('');
+const posts = ref<Post[]>([]);
 
 const goTosearch = () => {
   console.log(authorName.value);
   authorName.value = '';
 };
+
+const getInfoFromApi = async () => {
+  try {
+    const { data } = await axios.get('https://jsonplaceholder.typicode.com/posts');
+    posts.value = data;
+  } catch (error) {
+    console.error('Ошибка при получении данных:', error);
+    throw error;
+  }
+};
+
+onMounted(() => {
+  getInfoFromApi();
+});
 </script>
 
 <template>
@@ -29,8 +52,10 @@ const goTosearch = () => {
     </Container>
   </header>
   <main class="main">
-    <div class="main__card">
-      <postCard title="Test" description="test" authorName="dmitry" />
+    <div class="main__container">
+      <div class="main__card" v-for="post in posts" :key="post.id">
+        <postCard :title="post.title" :description="post.body" />
+      </div>
     </div>
   </main>
 </template>
@@ -53,6 +78,17 @@ const goTosearch = () => {
       width: 1rem;
       height: 1rem;
     }
+  }
+}
+
+.main {
+  margin-top: 3rem;
+  &__container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
   }
 }
 </style>
