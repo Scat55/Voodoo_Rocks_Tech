@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Container } from '@/shared/container';
 import { Input } from '@/shared/input';
+import { postCard } from '@/widgets/post-card';
+
 import { ref } from 'vue';
 
 const authorName = ref<string>('');
@@ -26,6 +28,11 @@ const goTosearch = () => {
       </div>
     </Container>
   </header>
+  <main class="main">
+    <div class="main__card">
+      <postCard title="Test" description="test" authorName="dmitry" />
+    </div>
+  </main>
 </template>
 
 <style scoped lang="scss">
