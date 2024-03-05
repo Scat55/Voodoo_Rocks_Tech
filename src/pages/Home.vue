@@ -13,30 +13,55 @@ interface Post {
   title: string;
   body: string;
 }
+
+interface User {
+  id: number;
+  name: string;
+  username: string;
+  email: string;
+}
+
 const searchQuery = ref<string>('');
 const posts = ref<Post[]>([]);
+const users = ref<User[]>([]);
 
-const searchNameCard = computed(() => {
-  const query = searchQuery.value.toLowerCase();
-
-  if (!query) {
-    return posts.value;
-  }
-  return posts.value.filter((post) => post.title.toLowerCase().includes(query));
-});
-
-const getInfoFromApi = async () => {
+// Делаем запросы на сервер
+const fetchPostsAndUsers = async () => {
   try {
-    const { data } = await axios.get('https://jsonplaceholder.typicode.com/posts');
-    posts.value = data;
+    const [postsResponse, usersResponse] = await Promise.all([
+      axios.get<Post[]>('https://jsonplaceholder.typicode.com/posts'),
+      axios.get<User[]>('https://jsonplaceholder.typicode.com/users'),
+    ]);
+    // При успешном выполнении записываем результаты в переменные
+    posts.value = postsResponse.data;
+    users.value = usersResponse.data;
+    // В противном случае выводи ошибку
   } catch (error) {
     console.error('Ошибка при получении данных:', error);
     throw error;
   }
 };
 
+// Возвращаем пользователя
+const getUserById = (userId: number): User | undefined => {
+  return users.value.find((user: User) => user.id === userId);
+};
+
+// Делаем поиск по автору
+const searchNameCard = computed(() => {
+  const query = searchQuery.value.toLowerCase();
+
+  if (!query) {
+    return posts.value;
+  }
+  return posts.value.filter((post) => {
+    const author = getUserById(post.userId);
+    return author && author.name.toLowerCase().includes(query);
+  });
+});
+
 onMounted(() => {
-  getInfoFromApi();
+  fetchPostsAndUsers();
 });
 </script>
 
@@ -58,7 +83,11 @@ onMounted(() => {
   <main class="main">
     <div class="main__container">
       <div class="main__card" v-for="post in searchNameCard" :key="post.id">
-        <postCard :title="post.title" :description="post.body" />
+        <postCard
+          :title="post.title"
+          :description="post.body"
+          :authorName="getUserById(post.userId)?.name || 'Автор неизвестен'"
+        />
       </div>
     </div>
   </main>
